@@ -45,7 +45,9 @@ static int REGEXP_size(PMOP *o)
     if (!rx) {
     	return retval;
     }
+#ifdef _REGEXP_COMMON /* 5.10 */
 
+#else /* pre-5.10 */
     retval = rx->prelen;
 
     retval += sizeof_if(rx->regstclass);
@@ -84,7 +86,7 @@ static int REGEXP_size(PMOP *o)
 
     	retval += sizeof(*rx->substrs);
     }
-
+#endif
     return retval;
 }
 
@@ -133,7 +135,7 @@ static XS(XS_B__PV_CUR)
     	ST(0) = sv_newmortal();
     	sv_setiv(ST(0), (IV)RETVAL);
     }
-    
+
     XSRETURN(1);
 }
 
@@ -159,7 +161,7 @@ static XS(XS_B__MAGIC_LENGTH)
     	ST(0) = sv_newmortal();
     	sv_setiv(ST(0), (IV)RETVAL);
     }
-    
+
     XSRETURN(1);
 }
 

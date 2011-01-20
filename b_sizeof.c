@@ -24,7 +24,9 @@ static void boot_B_Sizeof(void)
    (void)newCONSTSUB(stash, "U32", newSViv(sizeof(U32)));
    (void)newCONSTSUB(stash, "U16", newSViv(sizeof(U16)));
    (void)newCONSTSUB(stash, "U8", newSViv(sizeof(U8)));
+#ifdef XRV
    (void)newCONSTSUB(stash, "XRV", newSViv(sizeof(XRV)));
+#endif
    (void)newCONSTSUB(stash, "XPV", newSViv(sizeof(XPV)));
    (void)newCONSTSUB(stash, "XPVIV", newSViv(sizeof(XPVIV)));
    (void)newCONSTSUB(stash, "XPVUV", newSViv(sizeof(XPVUV)));
@@ -32,7 +34,9 @@ static void boot_B_Sizeof(void)
    (void)newCONSTSUB(stash, "XPVMG", newSViv(sizeof(XPVMG)));
    (void)newCONSTSUB(stash, "XPVLV", newSViv(sizeof(XPVLV)));
    (void)newCONSTSUB(stash, "XPVGV", newSViv(sizeof(XPVGV)));
+#ifdef XPVBM
    (void)newCONSTSUB(stash, "XPVBM", newSViv(sizeof(XPVBM)));
+#endif
    (void)newCONSTSUB(stash, "XPVFM", newSViv(sizeof(XPVFM)));
    (void)newCONSTSUB(stash, "XPVIO", newSViv(sizeof(XPVIO)));
    (void)newCONSTSUB(stash, "XPVCV", newSViv(sizeof(XPVCV)));

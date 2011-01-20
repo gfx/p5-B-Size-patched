@@ -76,7 +76,7 @@ sub B::PVNV::size {
 
 sub B::PVLV::size {
     my $sv = shift;
-    B::Sizeof::SV + B::Sizeof::XPVLV + 
+    B::Sizeof::SV + B::Sizeof::XPVLV +
     B::Sizeof::MAGIC + $sv->LEN;
 }
 
@@ -106,7 +106,7 @@ sub B::HV::size {
     my $size = B::Sizeof::HV + B::Sizeof::XPVHV;
     #$size += length($sv->NAME);
 
-    $size += ($sv->MAX * (B::Sizeof::HE + B::Sizeof::HEK)); 
+    $size += ($sv->MAX * (B::Sizeof::HE + B::Sizeof::HEK));
 
     my %vals = $sv->ARRAY;
     while (my($k,$v) = each %vals) {
@@ -117,7 +117,7 @@ sub B::HV::size {
 }
 
 sub B::RV::size {
-    B::Sizeof::SV + B::Sizeof::XRV;
+    B::Sizeof::SV + B::Sizeof::XRV();
 }
 
 sub B::CV::size {
@@ -126,7 +126,7 @@ sub B::CV::size {
 
 sub B::BM::size {
     my $sv = shift;
-    B::Sizeof::SV + B::Sizeof::XPVBM + $sv->LEN;
+    B::Sizeof::SV + B::Sizeof::XPVBM() + $sv->LEN;
 }
 
 sub B::FM::size {
@@ -182,7 +182,7 @@ sub B::NULL::sizeval {
     my $sv = shift;
     sprintf "0x%lx", $$sv;
 }
-    
+
 sub B::SPECIAL::sizeval {
     my $sv = shift;
     sprintf "0x%lx", $$sv;
