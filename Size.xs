@@ -1,6 +1,7 @@
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
+#include "ppport.h"
 
 #ifndef PM_GETRE
 #define PM_GETRE(o) ((o)->op_pmregexp)
@@ -45,7 +46,7 @@ static int REGEXP_size(PMOP *o)
     if (!rx) {
     	return retval;
     }
-#ifdef _REGEXP_COMMON /* 5.10 */
+#if PERL_BCDVERSION >= 0x5010000 /* 5.10 */
 
 #else /* pre-5.10 */
     retval = rx->prelen;
