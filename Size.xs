@@ -172,7 +172,7 @@ static XS(XS_B__OP_name)
         croak("Usage: B::OP::name(o)");
     {
     	B__OP	o;
-    	char *	RETVAL;
+    	const char *	RETVAL;
 
     	if (SvROK(ST(0))) {
     	    IV tmp = SvIV((SV*)SvRV(ST(0)));
@@ -232,11 +232,11 @@ REGEXP_size(o)
 
 MODULE = B::Size	PACKAGE = B::OP		PREFIX = OP_
 
-char *
+const char *
 OP_op_name(i)
     U16 i
 
-char *
+const char *
 OP_op_desc(i)
     U16 i
 

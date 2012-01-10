@@ -26,6 +26,10 @@ EOF
 while (<DATA>) {
     chomp;
     next unless $_;
+    if($] >= 5.010) {
+        next if $_ eq 'XRV';
+        next if $_ eq 'XPVBM';
+    }
     print XS newCONSTSUB($_);
 }
 print XS newCONSTSUB("CONDOP") if $] < 5.005_58;
