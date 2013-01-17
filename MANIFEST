@@ -1,4 +1,6 @@
+.shipit
 Changes
+Changes.original
 lib/B/Size2.pm
 lib/B/Size2/Terse.pm
 Makefile.PL
