@@ -1,0 +1,13 @@
+*~
+*.swp
+*.bak
+*.old
+blib/
+*.o
+*.bs
+Size2.c
+MYMETA.*
+META.*
+Makefile
+pm_to_blib
+b_sizeof.c

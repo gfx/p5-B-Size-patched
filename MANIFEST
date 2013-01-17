@@ -1,12 +1,14 @@
 Changes
-MANIFEST
+lib/B/Size2.pm
+lib/B/Size2/Terse.pm
 Makefile.PL
-README
-Size.pm
-Size.xs
-b_sizeof.c
-lib/B/TerseSize.pm
+MANIFEST			This list of files
+MANIFEST.SKIP
+META.yml
 patches/b_clearsym_60.pat
-test.pl
+ppport.h
+README
+Size2.xs
+t/001.basic.t
+t/002.terse.t
 typemap
-META.yml                                 Module meta-data (added by MakeMaker)

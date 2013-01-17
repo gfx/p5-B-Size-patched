@@ -1,4 +1,5 @@
-use 5.005;
+use 5.008_001;
+use strict;
 use ExtUtils::MakeMaker;
 
 open XS, ">b_sizeof.c" or die $!;
@@ -38,9 +39,10 @@ print XS newCONSTSUB("CONDOP") if $] < 5.005_58;
 
 print XS "\n}\n";
 
+
 WriteMakefile(
-    'NAME' => 'B::Size',
-    'VERSION_FROM' => 'Size.pm',
+    'NAME' => 'B::Size2',
+    'VERSION_FROM' => 'lib/B/Size2.pm',
 );
 
 sub newCONSTSUB {

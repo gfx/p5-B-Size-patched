@@ -217,7 +217,7 @@ static void boot_B_compat(void)
 #define OP_op_name(i) PL_op_name[i]
 #define OP_op_desc(i) PL_op_desc[i]
 
-MODULE = B::Size   PACKAGE = B::Sizeof
+MODULE = B::Size2   PACKAGE = B::Sizeof
 
 PROTOTYPES: disable
 
@@ -225,13 +225,13 @@ BOOT:
     boot_B_Sizeof();
     boot_B_compat();
 
-MODULE = B::Size	PACKAGE = B::PMOP
+MODULE = B::Size2	PACKAGE = B::PMOP
 
 int
 REGEXP_size(o)
     B::PMOP o
 
-MODULE = B::Size	PACKAGE = B::OP		PREFIX = OP_
+MODULE = B::Size2	PACKAGE = B::OP		PREFIX = OP_
 
 const char *
 OP_op_name(i)

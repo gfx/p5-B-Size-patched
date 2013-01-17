@@ -1,24 +1,21 @@
+
+# The original notice of B::Size:
 # B::TerseSize.pm
 # Copyright (c) 1999-2000 Doug MacEachern. All rights reserved.
 # This module is free software; you can redistribute and/or modify
 # it under the same terms as Perl itself.
 
-package B::Size;
+package B::Size2;
 
 use strict;
-use DynaLoader ();
+use warnings;
+use XSLoader ();
 use B ();
 
-my @specialsv_name = qw(Nullsv undef yes no);
-
 BEGIN {
-    no strict;
-    $VERSION = '0.09';
+    our $VERSION = '2.00';
 
-    *dl_load_flags = DynaLoader->can('dl_load_flags');
-    do {
-	__PACKAGE__->can('bootstrap') || \&DynaLoader::bootstrap;
-    }->(__PACKAGE__, $VERSION);
+    XSLoader::load(__PACKAGE__, $VERSION);
 }
 
 {
@@ -42,7 +39,6 @@ sub B::PVOP::size {
 
 *B::BINOP::size  = \&B::Sizeof::BINOP;
 *B::LOGOP::size  = \&B::Sizeof::LOGOP;
-*B::CONDOP::size = \&B::Sizeof::CONDOP if $] < 5.005_58;
 *B::LISTOP::size = \&B::Sizeof::LISTOP;
 
 sub B::PMOP::size {
@@ -85,7 +81,7 @@ sub B::PVMG::size {
     my $size = B::Sizeof::SV + B::Sizeof::XPVMG;
     my(@chain) = $sv->MAGIC;
     for my $mg (@chain) {
-	$size += B::Sizeof::MAGIC + $mg->LENGTH;
+        $size += B::Sizeof::MAGIC + $mg->LENGTH;
     }
     $size;
 }
@@ -96,7 +92,7 @@ sub B::AV::size {
     my @vals = $sv->ARRAY;
     for (my $i = 0; $i <= $sv->MAX; $i++) {
         my $sizecv = $vals[$i]->can('size') if $vals[$i];
-	$size += $sizecv ? $sizecv->($vals[$i]) : B::Sizeof::SV;
+        $size += $sizecv ? $sizecv->($vals[$i]) : B::Sizeof::SV;
     }
     $size;
 }
@@ -110,7 +106,7 @@ sub B::HV::size {
 
     my %vals = $sv->ARRAY;
     while (my($k,$v) = each %vals) {
-	$size += length($k) + $v->size;
+        $size += length($k) + $v->size;
     }
 
     $size;
@@ -147,7 +143,7 @@ sub B::NULL::size {
 
 sub B::SPECIAL::PV {
     my $sv = shift;
-    $specialsv_name[$$sv];
+    $B::specialsv_name[$$sv];
 }
 
 sub B::RV::sizeval {
@@ -200,9 +196,9 @@ sub B::CV::is_alias {
     my($cv, $package) = @_;
     my $stash  = $cv->GV->STASH->NAME;
     if($package ne $stash) {
-	my $name = $cv->GV->NAME;
-	#print "$package\::$name aliased to $stash\::$name\n";
-	return $stash;
+    my $name = $cv->GV->NAME;
+    #print "$package\::$name aliased to $stash\::$name\n";
+    return $stash;
     }
     0;
 }
@@ -231,21 +227,29 @@ __END__
 
 =head1 NAME
 
-B::Size - Measure size of Perl OPs and SVs
+B::Size2 - Measure size of Perl OPs and SVs
 
 =head1 SYNOPSIS
 
-  use B::Size ();
+  use B::Size2 ();
 
 =head1 DESCRIPTION
 
-See B::TerseSize
+I<< B::Size2 is a fork of B::Size 0.09 >>.
+
+See L<B::Size2::Terse>.
 
 =head1 SEE ALSO
 
-B::TerseSize(3), Apache::Status(3)
+L<B::Size2::Terse>
 
-=head1 AUTHOR
+L<B::Size> - the original
+
+=head1 AUTHORS
+
+Fuji, Goro (gfx) E<LT>gfuji@cpan.orgE<gt>
+
+=head1 ORIGINAL AUTHORS
 
 Doug MacEachern
 

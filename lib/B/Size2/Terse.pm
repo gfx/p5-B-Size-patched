@@ -1,3 +1,4 @@
+# The original notice of B::Size:
 # B::TerseSize.pm
 # Copyright (c) 1999 Doug MacEachern. All rights reserved.
 # This module is free software; you can redistribute and/or modify
@@ -5,20 +6,17 @@
 
 # portions of this module are based on B::Terse, by Malcolm Beattie
 
-package B::TerseSize;
+package B::Size2::Terse;
 
 use strict;
-use constant IS_MODPERL => $ENV{MOD_PERL};
-use constant MP2        => $ENV{MOD_PERL_API_VERSION} == 2 ? 1 : 0;
+use warnings;
+use constant IS_MODPERL => ($ENV{MOD_PERL} || 0);
+use constant MP2        => ($ENV{MOD_PERL_API_VERSION} || 0) == 2 ? 1 : 0;
 
 use B ();
-use B::Asmdata qw(@specialsv_name);
-use B::Size ();
+use B::Size2 ();
 
-{
-    no strict;
-    $VERSION = '0.09';
-}
+our $VERSION = "2.00";
 
 my $opcount;
 my $opsize;
@@ -100,7 +98,7 @@ sub package_size {
         }
 
         unless ($has_code) { #CV_walk will measure
-            $total_opsize += 
+            $total_opsize +=
               B::Sizeof::GV + B::Sizeof::XPVGV + B::Sizeof::GP;
         }
 
@@ -126,7 +124,7 @@ sub package_size {
         for (keys %{ $filelex{$package} }) {
             my $fsize = $filelex{$package}->{$_};
             $total_opsize += $opsize;
-            $retval{"my ${_} = ...;"} = 
+            $retval{"my ${_} = ...;"} =
               {'size' => $fsize};
         }
         %filelex = ();
@@ -264,11 +262,11 @@ sub B::OP::terse_size {
         my $name = B::OP::op_name($op->targ);
         my $desc = B::OP::op_desc($op->targ);
         if ($op->type == 0) { #OP_NULL
-            $targ = $name eq $desc ? " [$name]" : 
+            $targ = $name eq $desc ? " [$name]" :
               sprintf " [%s - %s]", $name, $desc;
         }
         else {
-            $targ = sprintf " [targ %d - %s]", $t, 
+            $targ = sprintf " [targ %d - %s]", $t,
             padname($curpad_names[$t]);
         }
     }
@@ -345,7 +343,7 @@ sub B::PV::terse_size {
     my ($sv, $level) = @_;
     print indent($level);
     my $pv = B::cstring($sv->PV);
-    B::Size::escape_html(\$pv) if IS_MODPERL;
+    B::Size2::escape_html(\$pv) if IS_MODPERL;
     printf "%s %s\n", B::class($sv), $pv;
 }
 
@@ -390,11 +388,11 @@ sub B::NULL::terse_size {
     print indent($level);
     printf "%s \n", B::class($sv);
 }
-    
+
 sub B::SPECIAL::terse_size {
     my ($sv, $level) = @_;
     print indent($level);
-    printf "%s #%d %s\n", B::class($sv), $$sv, $specialsv_name[$$sv];
+    printf "%s #%d %s\n", B::class($sv), $$sv, $B::specialsv_name[$$sv];
 }
 
 my $padname_max = 0;
@@ -414,7 +412,7 @@ sub PADLIST_size {
     $padname_max = 0;
     my @names_pv = map {
         my $pv = padname($_);
-        $padname_max = length($pv) > $padname_max ? 
+        $padname_max = length($pv) > $padname_max ?
           length($pv) : $padname_max;
         $pv;
     } @names;
@@ -431,7 +429,7 @@ sub PADLIST_size {
         if ($is_fake) {
             $entsize += B::Sizeof::SV; # just a reference to outside scope
             if (B::class($obj->OUTSIDE->GV) eq 'SPECIAL') {
-                $filelex{ $obj->GV->STASH->NAME }->{ $names_pv[$i] } = 
+                $filelex{ $obj->GV->STASH->NAME }->{ $names_pv[$i] } =
                   $vals[$i]->size;
             }
             else {
@@ -449,9 +447,9 @@ sub PADLIST_size {
         $class, $entsize;
 
         no warnings;
-        push @retval, sprintf "%${fill_len}d: %${padname_max}s %s %s\n", 
+        push @retval, sprintf "%${fill_len}d: %${padname_max}s %s %s\n",
         $i,
-        $names_pv[$i], 
+        $names_pv[$i],
         $byteinfo,
         $is_fake ? '__SvFAKE__' : $vals[$i]->sizeval;
     }
@@ -504,8 +502,8 @@ sub Apache::Status::noh_fileline {
         chomp;
         s/^\t/        /; #indent proper
         my $lineno = sprintf "%4d", $i;
-        B::Size::escape_html(\$_);
-        my $line = ($i == $args{line}) ? 
+        B::Size2::escape_html(\$_);
+        my $line = ($i == $args{line}) ?
           \qq(<font color="#FF0000">$_</font>) : \$_;
         print qq($lineno: <a name=$i>$$line</a>\n);
 
@@ -521,7 +519,7 @@ sub Apache::Status::noh_fileline {
 sub Apache2::Status::noh_fileline {
     my $r = shift;
     my $args = $r->args;
-    
+
     require CGI;
     my $CGI = CGI->new($args);
     my %params = map { $_ => $CGI->param($_) } $CGI->param();
@@ -567,8 +565,8 @@ sub Apache2::Status::noh_fileline {
         chomp;
         s/^\t/        /; #indent proper
         my $lineno = sprintf "%4d", $i;
-        B::Size::escape_html(\$_);
-        my $line = ($i == $params{line}) ? 
+        B::Size2::escape_html(\$_);
+        my $line = ($i == $params{line}) ?
           \qq(<font color="#FF0000">$_</font>) : \$_;
         print qq($lineno: <a name=$i>$$line</a>\n);
 
@@ -607,7 +605,7 @@ sub apache_package_size {
 
     $cache->{'keys'} = $keys;
     $summary_cache{$package} = $cache;
-    @{ $cache->{'data'} } = B::TerseSize::package_size($package);
+    @{ $cache->{'data'} } = B::Size2::Terse::package_size($package);
 }
 
 sub status_memory_usage {
@@ -645,7 +643,7 @@ sub status_memory_usage {
     for (sort { $total{$b}->{size} <=> $total{$a}->{size} } keys %total) {
         my $link = qq(<a href="$script/$_?noh_b_package_size">);
         push @retval,
-        sprintf "$link%-${nlen}s</a> %${slen}d bytes | %${clen}d OPs\n", 
+        sprintf "$link%-${nlen}s</a> %${slen}d bytes | %${clen}d OPs\n",
         $_, $total{$_}->{size}, $total{$_}->{count};
     }
     \@retval;
@@ -670,23 +668,25 @@ __END__
 
 =head1 NAME
 
-B::TerseSize - Printing info about ops and their (estimated) size
+B::Size2::Terse - Printing info about ops and their (estimated) size
 
 =head1 SYNOPSIS
 
-	perl -MO=TerseSize[,OPTIONS] foo.pl
+    perl -MO=Size2::Terse[,OPTIONS] foo.pl
 
 =head1 DESCRIPTION
 
-The I<B::Size> and I<B::TerseSize> modules attempt to measure the size 
-of Perl op codes.  The output of B<B::TerseSize> is similar to that of 
+I<< B::Size2::Terse is a fork of B::TerseSize 0.09 >>.
+
+The I<B::Size> and I<B::TerseSize> modules attempt to measure the size
+of Perl op codes.  The output of B<B::TerseSize> is similar to that of
 I<B::Terse>, but includes the size of each OP in the tree and the
-PADLIST (subroutine lexical variables).  The module can be run just as 
+PADLIST (subroutine lexical variables).  The module can be run just as
 other compiler backends or used via I<Apache::Status> (version 2.02
 and higher).
 
 If the I<Apache::Status> I<StatusTerseSize> option is enabled, there
-will be a main menu item added, "Memory Usage".  Clicking on this link 
+will be a main menu item added, "Memory Usage".  Clicking on this link
 will cause I<B::TerseSize> to produce a summary of package memory
 usage.  This summary can take quite a while to produce, as each
 package subroutine syntax tree will be walked, adding up the
@@ -697,12 +697,12 @@ When browsing the Apache::Status "Symbol Table Dump", a "Memory
 Usage" link will be at the bottom of each page.  These summaries
 also include measurements of package global variables.
 
-The Apache::Status symbol table browser will also provide an option to 
+The Apache::Status symbol table browser will also provide an option to
 dump a subroutine tree along with the other subroutine options.
 
 =head1 CAVEATS
 
-The memory measurements are only an estimate.  But, chances are, if a 
+The memory measurements are only an estimate.  But, chances are, if a
 measurement is not accurate, it is smaller than the actual size.
 
 The "execution order" option under Apache::Status can only be run once
@@ -713,9 +713,13 @@ I<patches/b_clearsym_60.pat> to older Perls.
 
 B(3), B::Size(3), B::LexInfo(3), Apache::Status(3)
 
-=head1 AUTHOR
+=head1 AUTHORS
 
-Currently Maintained by Philip M. Gollucci
+Fuji, Goro (gfx) E<LT>gfuji@cpan.orgE<gt>
+
+=head1 ORIGINAL AUTHORS
+
+Until 0.09 Maintained by Philip M. Gollucci
 Previously Developed by Doug MacEachern
 based in part on B::Terse by Malcolm Beattie
 
